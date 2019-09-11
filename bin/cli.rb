@@ -28,17 +28,29 @@ class Cli
       
     end
     user = User.find_by(username: user_name)
-    menu_choice = prompt.select("Hello #{user.name}! What would you like to do?", ["Create a new tweet", "See all your tweets", "See most popular topic", "See all tweets for a topic", "Update a tweet", "Delete a tweet", "See all topics", "Exit"]) 
+    menu_choice = prompt.select("Hello #{user.name}! What would you like to do?", ["Create a new tweet", "See all your tweets", "See all topics", "See most popular topic", "See all tweets for a topic", "Update a tweet", "Delete a tweet", "Exit"]) 
     case menu_choice
-      when "Create a new tweet" then content = prompt.ask("What should your tweet say?"); 
-      when "See all your tweets" then user.tweets.each {|tweet| puts tweet.message; puts "**********"}
-      when "See most popular topic" then puts "Photography"
-      when "See all tweets for a topic" then puts "some tweets"
-      when "Update a tweet" then which = prompt.ask("Which tweet would you like to update?")
-      when "Delete a tweet" then which = prompt.ask("Which tweet would you like to delete?")
-      when "See all topics" then Topic.all.each {|topic| puts topic; puts "**********"}
-      when "Exit" then exit
+      when "Create a new tweet" 
+        content = prompt.ask("What should your tweet say?"); 
+        cat = prompt.ask("What category is your tweet?")
+        Tweet.create(user_id: user.id, message: content)
+        Topic.all
+      when "See all your tweets" 
+        user.tweets.each {|tweet| puts tweet.message; puts "**********"}
+      when "See most popular topic" 
+        puts "Photography"
+      when "See all tweets for a topic" 
+        puts "some tweets"
+      when "Update a tweet" 
+        which = prompt.ask("Which tweet would you like to update?")
+      when "Delete a tweet" 
+        which = prompt.ask("Which tweet would you like to delete?")
+      when "See all topics" 
+        Topic.all.each {|topic| puts topic.name.upcase; puts "**********"}
+      when "Exit" 
+        exit
     end
+    return self.main_menu
     binding.pry
   end
 end
