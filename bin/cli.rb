@@ -58,15 +58,25 @@ class Cli
         topic.tweets.map(&:message).each {|x| puts x}  
       when "Update a tweet" 
         # DONE:
+        if user.tweets.empty?
+          puts "Sorry, you do not have any tweets to update."
+            return self.menu_options(user)
+          else
         which_tweet = prompt.select("Which tweet would you like to update?", user.tweets.map(&:message))
         tweet = Tweet.find_by(message: which_tweet)
         update = prompt.ask("What would like to update it to say?")
         tweet.update(message: update)
+          end
       when "Delete a tweet" 
         # DONE: kinda works, but only after closing cli and reopening
+        if user.tweets.empty?
+          puts "Sorry, you do not have any tweets to delete."
+            return self.menu_options(user)
+          else
         which_tweet = prompt.select("Which tweet would you like to delete?", user.tweets.map(&:message))
         tweet = Tweet.find_by(message: which_tweet)
         tweet.delete
+          end
       when "See all topics" 
         Topic.all.each {|topic| puts topic.name.upcase; puts "**********"}
       when "Exit" 
