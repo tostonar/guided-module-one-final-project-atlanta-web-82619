@@ -43,8 +43,13 @@ class Cli
         TweetTopic.create(tweet_id:tw.id, topic_id:to.id)
       all_topics = Topic.all  
       when "See all your tweets" 
+        if user.tweets.empty?
+          puts "You do not have any tweets to view."
+            return self.menu_options(user)
+          else
         user = User.find(user.id)
         user.tweets.each {|tweet| puts tweet.message; puts "**********"}
+          end
       when "See most popular topic" 
         puts Topic.most_popular_topic.upcase
       when "See all tweets for a topic" 
