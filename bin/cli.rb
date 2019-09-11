@@ -30,7 +30,7 @@ class Cli
     user = User.find_by(username: user_name)
     menu_options(user)
     
-    binding.pry
+    
   end
 
   def menu_options(user)
@@ -44,13 +44,15 @@ class Cli
         # TODO: see if topic already exists, if not then create new topic, and associate that topic with your tweet 
         to = Topic.find_or_create_by(name: cat)
         TweetTopic.create(tweet_id:tw.id, topic_id:to.id)
-        
+      all_topics = Topic.all  
       when "See all your tweets" 
         user.tweets.each {|tweet| puts tweet.message; puts "**********"}
       when "See most popular topic" 
-        puts "Photography"
+        puts Topic.most_popular_topic.upcase
       when "See all tweets for a topic" 
-        puts "some tweets"
+        which_topic = prompt.select("Which topic?", Topic.all.map(&:name))
+        topic = Topic.find_by(name: which_topic)
+        topic.tweets.map(&:message).each {|x| puts x}  
       when "Update a tweet" 
         which = prompt.ask("Which tweet would you like to update?")
       when "Delete a tweet" 
@@ -58,6 +60,7 @@ class Cli
       when "See all topics" 
         Topic.all.each {|topic| puts topic.name.upcase; puts "**********"}
       when "Exit" 
+        # binding.pry
         exit
     end
     return self.menu_options(user)
