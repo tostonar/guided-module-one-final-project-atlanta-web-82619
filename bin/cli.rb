@@ -48,9 +48,11 @@ class Cli
       when "See all your tweets" 
         user.tweets.each {|tweet| puts tweet.message; puts "**********"}
       when "See most popular topic" 
-        puts "Photography"
+        puts Topic.most_popular_topic
       when "See all tweets for a topic" 
-        puts "some tweets"
+        t = prompt.ask("What topic would you like to see?")
+        topic = Topic.find_or_create_by(name: t)
+        puts topic.tweets.map{|tweet| tweet.message}
       when "Update a tweet" 
         which = prompt.ask("Which tweet would you like to update?")
       when "Delete a tweet" 
