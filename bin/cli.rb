@@ -25,12 +25,9 @@ class Cli
       else
         User.create(name: full_name, username: user_name)
       end
-      
     end
     user = User.find_by(username: user_name)
     menu_options(user)
-    
-    
   end
 
   def menu_options(user)
@@ -41,11 +38,12 @@ class Cli
         content = prompt.ask("What should your tweet say?"); 
         cat = prompt.ask("What topic is your tweet?")
         tw= Tweet.create(user_id: user.id, message: content)
-        # TODO: see if topic already exists, if not then create new topic, and associate that topic with your tweet 
+        # DONE: see if topic already exists, if not then create new topic, and associate that topic with your tweet 
         to = Topic.find_or_create_by(name: cat)
         TweetTopic.create(tweet_id:tw.id, topic_id:to.id)
       all_topics = Topic.all  
       when "See all your tweets" 
+        user = User.find(user.id)
         user.tweets.each {|tweet| puts tweet.message; puts "**********"}
       when "See most popular topic" 
         puts Topic.most_popular_topic.upcase
@@ -54,9 +52,16 @@ class Cli
         topic = Topic.find_by(name: which_topic)
         topic.tweets.map(&:message).each {|x| puts x}  
       when "Update a tweet" 
-        which = prompt.ask("Which tweet would you like to update?")
+        # DONE:
+        which_tweet = prompt.select("Which tweet would you like to update?", user.tweets.map(&:message))
+        tweet = Tweet.find_by(message: which_tweet)
+        update = prompt.ask("What would like to update it to say?")
+        tweet.update(message: update)
       when "Delete a tweet" 
-        which = prompt.ask("Which tweet would you like to delete?")
+        # DONE: kinda works, but only after closing cli and reopening
+        which_tweet = prompt.select("Which tweet would you like to delete?", user.tweets.map(&:message))
+        tweet = Tweet.find_by(message: which_tweet)
+        tweet.delete
       when "See all topics" 
         Topic.all.each {|topic| puts topic.name.upcase; puts "**********"}
       when "Exit" 
