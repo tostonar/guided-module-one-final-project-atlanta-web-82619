@@ -39,9 +39,12 @@ class Cli
     case menu_choice
       when "Create a new tweet" 
         content = prompt.ask("What should your tweet say?"); 
-        cat = prompt.ask("What category is your tweet?")
-        Tweet.create(user_id: user.id, message: content)
-        Topic.all
+        cat = prompt.ask("What topic is your tweet?")
+        tw= Tweet.create(user_id: user.id, message: content)
+        # TODO: see if topic already exists, if not then create new topic, and associate that topic with your tweet 
+        to = Topic.find_or_create_by(name: cat)
+        TweetTopic.create(tweet_id:tw.id, topic_id:to.id)
+        
       when "See all your tweets" 
         user.tweets.each {|tweet| puts tweet.message; puts "**********"}
       when "See most popular topic" 
