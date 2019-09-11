@@ -28,6 +28,13 @@ class Cli
       
     end
     user = User.find_by(username: user_name)
+    menu_options(user)
+    
+    binding.pry
+  end
+
+  def menu_options(user)
+    prompt = TTY::Prompt.new
     menu_choice = prompt.select("Hello #{user.name}! What would you like to do?", ["Create a new tweet", "See all your tweets", "See all topics", "See most popular topic", "See all tweets for a topic", "Update a tweet", "Delete a tweet", "Exit"]) 
     case menu_choice
       when "Create a new tweet" 
@@ -50,7 +57,6 @@ class Cli
       when "Exit" 
         exit
     end
-    return self.main_menu
-    binding.pry
+    return self.menu_options(user)
   end
 end
