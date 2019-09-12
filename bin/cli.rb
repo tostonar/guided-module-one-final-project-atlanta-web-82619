@@ -35,7 +35,7 @@ class Cli
   end
 
   def menu_options(user)
-    puts user.last_five_tweets_by_follows
+    user.last_five_tweets_by_follows.map{|tweet| puts tweet; puts "******************************************"}
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Hello #{user.name}! What would you like to do?", ["Tweets", "Follows", "Topics", "Logout", "Exit"]) 
     case menu_choice
@@ -56,8 +56,19 @@ class Cli
 
   def tweet_options(user)
     prompt = TTY::Prompt.new
-    menu_choice = prompt.select("Howdy #{user.name}! What would you like to do?", ["Create a new tweet", "See all your tweets", "See all tweets for a topic", "Update a tweet", "Delete a tweet", "Exit"])
+    menu_choice = prompt.select("Howdy #{user.name}! What would you like to do?", ["View Others Tweets", "Create a new tweet", "See all your tweets", "See all tweets for a topic", "Update a tweet", "Delete a tweet", "Back"])
     case menu_choice
+    when "View Others Tweets"
+      tweet = prompt.select("Select a tweet you would like to interact with:", user.tweets_by_follows.map{|tweet| tweet.message})
+      puts tweet
+      choice = prompt.select("What would you like to do with the tweet?", ["Retweet", "Back"])
+        case choice
+        when "Retweet"
+          Tweet.create(message: "RT: #{tweet}", user_id: user.id)
+          return self.tweet_options(user)
+        when "Back"
+          return self.tweet_options(user)
+        end
     when "Create a new tweet" 
       content = prompt.ask("What should your tweet say?"); 
       cat = prompt.ask("What topic is your tweet?")
@@ -73,11 +84,13 @@ class Cli
       else
       user = User.find(user.id)
       user.tweets.each {|tweet| puts "You tweeted: " + tweet.message + " at " + tweet.created_at.strftime("%I:%M %p") + " on " + tweet.created_at.strftime("%d/%m/%Y"); puts "******************************************"}
+      return self.tweet_options(user)
       end
     when "See all tweets for a topic" 
       which_topic = prompt.select("Which topic?", Topic.all.map(&:name))
       topic = Topic.find_by(name: which_topic)
-      topic.tweets.map(&:message).each {|x| puts x; puts "******************************************"}  
+      topic.tweets.map(&:message).each {|x| puts x; puts "******************************************"} 
+      return self.tweet_options(user)
     when "Update a tweet" 
       # DONE:
       if user.tweets.empty?
@@ -88,6 +101,7 @@ class Cli
       tweet = Tweet.find_by(message: which_tweet)
       update = prompt.ask("What would like to update it to say?")
       tweet.update(message: update)
+      return self.tweet_options(user)
       end
     when "Delete a tweet" 
       # DONE: kinda works, but only after closing cli and reopening
@@ -95,18 +109,20 @@ class Cli
         puts "Sorry, you do not have any tweets to delete."
           return self.tweet_options(user)
       else
+      user = User.find(user.id)
       which_tweet = prompt.select("Which tweet would you like to delete?", user.tweets.map(&:message))
       tweet = Tweet.find_by(message: which_tweet)
       tweet.delete
+      return self.tweet_options(user)
       end
-    when "Exit"
+    when "Back"
         return self.menu_options(user)
     end
   end
 
   def follow_options(user)
     prompt = TTY::Prompt.new
-    menu_choice = prompt.select("Hola #{user.name}! What would you like to do?", ["Following", "Followers", "Follow Tweeters", "Exit"])
+    menu_choice = prompt.select("Hola #{user.name}! What would you like to do?", ["Following", "Followers", "Follow Tweeters", "Back"])
     case menu_choice
     when "Following"
       if user.follows.empty?
@@ -115,15 +131,33 @@ class Cli
       else
       fallow = prompt.select("#{user.username} follows:", user.follows.map{|t| t.username})  
       follow_choice = User.all.find_by(username: fallow)
-      choice = prompt.select("Options:",["Tweets by #{fallow}", "Followers of #{fallow}", "Exit"])
+      choice = prompt.select("Options:",["Tweets by #{fallow}", "Followers of #{fallow}", "Back"])
         if choice == "Tweets by #{fallow}"
-        follow_choice.tweets.map{|tweet| puts tweet.message; puts "on " + tweet.created_at.strftime("%d/%m/%Y") + " at " + tweet.created_at.strftime("%I:%M %p") ; puts "***********************************************"}
+          tweet = prompt.select("Select a tweet you would like to interact with:", follow_choice.tweets.map{|tweet| tweet.message})
+          puts tweet
+          choice = prompt.select("What would you like to do with the tweet?", ["Retweet", "Back"])
+            case choice
+            when "Retweet"
+              Tweet.create(message: "RT: #{tweet} originally tweeted by #{follow_choice.username}", user_id: user.id)
+              return self.follow_options(user)
+            when "Back"
+              return self.follow_options(user)
+            end
         elsif choice == "Followers of #{fallow}"
         follower = prompt.select("#{fallow}'s followers:", follow_choice.followers.map{|f| f.username})
         user_follower = User.all.find_by(username: follower)
-        choice2 = prompt.select("Options:", ["Tweets by #{follower}", "Exit"])
+        choice2 = prompt.select("Options:", ["Tweets by #{follower}", "Back"])
           if choice2 = "Tweets by #{follower}"
-          user_follower.tweets.map{|tweet| puts tweet.message; puts "on " + tweet.created_at.strftime("%d/%m/%Y") + " at " + tweet.created_at.strftime("%I:%M %p") ; puts "***********************************************"}
+            tweet = prompt.select("Select a tweet you would like to interact with:", user_follower.tweets.map{|tweet| tweet.message})
+            puts tweet
+            choice = prompt.select("What would you like to do with the tweet?", ["Retweet", "Back"])
+              case choice
+              when "Retweet"
+                Tweet.create(message: "RT: #{tweet} originally tweeted by: #{user_follower.username}", user_id: user.id)
+                return self.follow_options(user)
+              when "Back"
+                return self.follow_options(user)
+              end
           else 
           return self.follow_options(user)
           end
@@ -140,13 +174,31 @@ class Cli
       fallow_choice = User.all.find_by(username: fallow)
       choice3 = prompt.select("Options:",["Tweets by #{fallow}", "Followers of #{fallow}", "Exit"])
         if choice3 == "Tweets by #{fallow}"
-        fallow_choice.tweets.map{|tweet| puts tweet.message; puts "on " + tweet.created_at.strftime("%d/%m/%Y") + " at " + tweet.created_at.strftime("%I:%M %p") ; puts "***********************************************"}
+          tweet = prompt.select("Select a tweet you would like to interact with:", fallow_choice.tweets.map{|tweet| tweet.message})
+          puts tweet
+          choice = prompt.select("What would you like to do with the tweet?", ["Retweet", "Back"])
+            case choice
+            when "Retweet"
+              Tweet.create(message: "RT: #{tweet} originally tweeted by: #{fallow_choice.username}", user_id: user.id)
+              return self.tweet_options(user)
+            when "Back"
+              return self.tweet_options(user)
+            end
         elsif choice3 == "Followers of #{fallow}"
         fallower = prompt.select("#{fallow}'s followers:", fallow_choice.followers.map{|f| f.username})
         user_follower = User.all.find_by(username: fallower)
         choice2 = prompt.select("Options:", ["Tweets by #{fallower}", "Exit"])
           if choice2 = "Tweets by #{fallower}"
-          user_follower.tweets.map{|tweet| puts tweet.message; puts "on " + tweet.created_at.strftime("%d/%m/%Y") + " at " + tweet.created_at.strftime("%I:%M %p") ; puts "***********************************************"}
+            tweet = prompt.select("Select a tweet you would like to interact with:", user_follower.tweets.map{|tweet| tweet.message})
+            puts tweet
+            choice = prompt.select("What would you like to do with the tweet?", ["Retweet", "Back"])
+              case choice
+              when "Retweet"
+                Tweet.create(message: "RT: #{tweet} originally tweeted by: #{user_follower.username}", user_id: user.id)
+                return self.follow_options(user)
+              when "Back"
+                return self.follow_options(user)
+              end
           else 
           return self.follow_options(user)
           end
@@ -169,14 +221,14 @@ class Cli
       else 
         return self.follow_options(user)
       end
-    when "Exit"
+    when "Back"
       return self.menu_options(user)
     end
   end
 
 def topic_options(user)
     prompt = TTY::Prompt.new
-    menu_choice = prompt.select("Hell #{user.name}! What would you like to do?", ["See all topics", "See most popular topic", "See all tweets for a topic", "Exit"])
+    menu_choice = prompt.select("Hell #{user.name}! What would you like to do?", ["See all topics", "See most popular topic", "See all tweets for a topic", "Back"])
     case menu_choice
     when "See all topics" 
       Topic.all.each {|topic| puts topic.name.upcase; puts "**********"}
@@ -186,7 +238,7 @@ def topic_options(user)
       which_topic = prompt.select("Which topic?", Topic.all.map(&:name))
       topic = Topic.find_by(name: which_topic)
       topic.tweets.map(&:message).each {|x| puts x; puts "******************************************"}  
-    when "Exit"
+    when "Back"
       return self.menu_options(user)
     end
   end
