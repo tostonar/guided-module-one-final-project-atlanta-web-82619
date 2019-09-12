@@ -71,7 +71,7 @@ class Cli
           return self.tweet_options(user)
       else
       user = User.find(user.id)
-      user.tweets.each {|tweet| puts tweet.message; puts "******************************************"}
+      user.tweets.each {|tweet| puts "You tweeted: " + tweet.message + " at " + tweet.created_at.strftime("%I:%M %p") + " on " + tweet.created_at.strftime("%d/%m/%Y"); puts "******************************************"}
       end
     when "See all tweets for a topic" 
       which_topic = prompt.select("Which topic?", Topic.all.map(&:name))
