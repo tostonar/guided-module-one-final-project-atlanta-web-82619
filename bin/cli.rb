@@ -214,14 +214,15 @@ class Cli
       tweeters_minus_you = User.all.select{|u| u.username != user.username}
       tweeters_you_already_follow = user.follows
       tweeters_available_to_follow = tweeters_minus_you - tweeters_you_already_follow
-      tweeter = prompt.select("Tweeters:", [tweeters_available_to_follow.map{|t| t.username}, "Exit"])
-      if tweeter == "Exit"
-        return self.menu_options(user)
+      tweeter = prompt.select("Tweeters:", [tweeters_available_to_follow.map{|t| t.username}, "Back"])
+      if tweeter == "Back"
+        return self.follow_options(user)
       end
       choice = prompt.select("Would you like to fallow #{tweeter}", ["Yes", "No"])
       tweeter_user = User.all.find{|user| user.username == tweeter}
       if choice == "Yes"
         Follow.create(follower_id: user.id, followed_id: tweeter_user.id)
+        return self.follow_options(user)
       else 
         return self.follow_options(user)
       end
