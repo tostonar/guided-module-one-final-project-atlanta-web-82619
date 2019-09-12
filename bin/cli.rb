@@ -16,6 +16,10 @@ class Cli
     case choice
     when "Sign in"
       user_name = prompt.ask("What is your username?")
+      if !User.find_by(username: user_name)
+        puts "That is not a valid username, please try again."
+        self.run
+      end
     when "Create an account"
       full_name = prompt.ask("What is your full name?")
       user_name = prompt.ask("What would you like your username to be?")
