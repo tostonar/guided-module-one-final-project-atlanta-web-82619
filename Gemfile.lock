@@ -11,7 +11,6 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-<<<<<<< HEAD
     arel (7.1.4)
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
@@ -24,7 +23,6 @@ GEM
       equatable (~> 0.6)
       tty-color (~> 0.5)
     pry (0.10.4)
-=======
       zeitwerk (~> 2.1, >= 2.1.8)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
@@ -36,7 +34,6 @@ GEM
     minitest (5.11.3)
     mustermann (1.0.3)
     pry (0.12.2)
->>>>>>> master
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     rack (2.0.7)

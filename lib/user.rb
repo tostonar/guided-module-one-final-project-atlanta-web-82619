@@ -8,8 +8,5 @@ class User < ActiveRecord::Base
   def create_topic(topic)
     Topic.create(name: topic)
   end
-<<<<<<< HEAD
-=======
 
->>>>>>> master
 end
