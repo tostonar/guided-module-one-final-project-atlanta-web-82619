@@ -16,4 +16,9 @@ class User < ActiveRecord::Base
   def followers
     Follow.all.select{|f| f.followed_id == self.id}.map{|f| f.follower_id}.map{|id| User.find(id)}.uniq
   end
+
+  def last_five_tweets_by_follows
+    last_5 = self.follows.map{|u| u.tweets}.flatten.max_by(5){|tweet| tweet.created_at}
+    last_5.map {|tweet| User.find(tweet.user_id).username + " tweeted " + tweet.message + " at " + tweet.created_at.strftime("%I:%M %p") + " on " + tweet.created_at.strftime("%d/%m/%Y")}
+  end
 end

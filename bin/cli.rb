@@ -35,6 +35,7 @@ class Cli
   end
 
   def menu_options(user)
+    puts user.last_five_tweets_by_follows
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Hello #{user.name}! What would you like to do?", ["Tweets", "Follows", "Topics", "Logout", "Exit"]) 
     case menu_choice
