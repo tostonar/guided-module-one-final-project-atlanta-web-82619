@@ -1,8 +1,6 @@
-# Module One Project 
+# Tweeter - Module One Project 
 
-Congratulations, you're at the end of module one! You've worked crazy hard to get here and have learned a ton.
-
-For your final project, we'll be building a Command Line database application.
+We have built a Command Line database application similar to Twitter that allows users to microblog.
 
 ### Goals for the Command Line CRUD App
 
@@ -12,24 +10,17 @@ For your final project, we'll be building a Command Line database application.
 4. Use good OO design patterns. You should have separate models for your runner and CLI interface.
 
 ## Instructions
+![cli app](https://photos.google.com/share/AF1QipMsrDQSfbTtjh-6bN9EP7lBHtcpaPNLI7MPD4efz0GnqZw6Xf8-wVJS2fArgihbdg/photo/AF1QipOkQoV3MCQQLFzn_MUmLO5q7QrQdVAArw1khGQk?key=N0J1UEd4M2tFTHdJa3NCOGNpbU5QU3Y3VzhKeEhR)
 
 ### Set Up and Planning
-1. Fork and clone the module one final project. The person who forked the lab should share the link with their teammate(s) to clone, and add them as collaborators. As you work, be sure to create a flow of creating a branch, committing and pushing it up to master, merging, and having teammates pull down the new master.
-2. Before you start building, take a look at the files you have available in this repo.
-    * In the main directory, you've got a gemfile that gives you access to activerecord, pry, rake, and sqlite3. Remember to bundle install!
-    * In the bin directory, you've got a run.rb file that you can run from the command line with ```ruby bin/run.rb.```
-    * In config, you've got your database set up with activerecord, as well as all of your models from the lib file made available to your database.
-    * In the lib directory, you'll be building all your models.
-    * Note that there is no spec directory. Your goal is to use Behavior Driven Development to confirm that your code is doing what it should. This means instead of running rspec or learn, you should frequently be opening up the rake console and confirming that your methods and associations work.
+1. Clone Tweeter. 
+2. In your terminal, run `bundle install` to install the necessary gems.
 
-3. Your first goal should be to decide on your models and determine the relationships between them. You'll need one many-to-many relationship.
-  Here are some ideas:
-    * Train Line, Station, Station Lines: A line has many stations and a station has many lines, station_lines belongs to line and station
-    * Movie, Actor, Movie Actors: A movie has many actors and an actor has many movies, movie_actors belongs to movie and actor
-    * Tweet, Topic, Tweet topics: A tweet has many topics and a topic has many tweets, tweet_topic belongs to tweet and topic
+3. Run the Tweeter by typing `run bin/run.rb`.
+4. You will be invited to sign in with your username, create an account, or exit. You can use the up and down arrows to choose your desired action, then press enter once it is highlighted.
+  
 
-    Whiteboard out your ideas and think about what columns you'll want in the corresponding tables, including foreign keys. Where are foreign keys stored in a many-to-many relationship? **Get your data modeling approved by an instructor before moving on to the next step.**
-
+    
 ### Data Models    
 4. Make a new file for each model in your lib folder. What's the naming convention for a model filename? Check out previous labs for a reminder. Remember that activerecord gem from our gemfile? Make sure that every model inherits from activerecord base.
 5. Be sure to include the relationships between your models. The <a href="http://guides.rubyonrails.org/association_basics.html">activerecord documentation</a> is a great source if you get stuck! Check out the ```has_many :through``` section when setting up your many-to-many relationship.
