@@ -35,6 +35,9 @@ class Cli
   end
 
   def menu_options(user)
+    font = TTY::Font.new(:doom)
+    puts " "
+    puts font.write("tweeter")
     puts user.last_five_tweets_by_follows
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Hello #{user.name}! What would you like to do?", ["Tweets", "Follows", "Topics", "Logout", "Exit"]) 
@@ -55,6 +58,9 @@ class Cli
   end
 
   def tweet_options(user)
+    font = TTY::Font.new(:doom)
+    puts " "
+    puts font.write("tweets")
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Howdy #{user.name}! What would you like to do?", ["Create a new tweet", "See all your tweets", "See all tweets for a topic", "Update a tweet", "Delete a tweet", "Exit"])
     case menu_choice
@@ -105,6 +111,9 @@ class Cli
   end
 
   def follow_options(user)
+    font = TTY::Font.new(:doom)
+    puts " "
+    puts font.write("follow")
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Hola #{user.name}! What would you like to do?", ["Following", "Followers", "Follow Tweeters", "Exit"])
     case menu_choice
@@ -175,6 +184,9 @@ class Cli
   end
 
 def topic_options(user)
+  font = TTY::Font.new(:doom)
+    puts " "
+    puts font.write("topics")
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Hell #{user.name}! What would you like to do?", ["See all topics", "See most popular topic", "See all tweets for a topic", "Exit"])
     case menu_choice
