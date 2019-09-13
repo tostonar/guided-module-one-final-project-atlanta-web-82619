@@ -4,7 +4,7 @@
 We have built a Command Line database application similar to Twitter that allows users to share their thoughts with the world.
 
 ## Instructions
-![cli app](./img/tweeter_welcome copy.png)
+![cli app](./img/tweeter_welcome_copy.png)
 
 ### Set Up and Planning
 1. Clone Tweeter. 
