@@ -11,13 +11,16 @@ class Cli
   end
 
   def run
+    pastel = Pastel.new
+    error    = pastel.red.bold.detach
+    warning  = pastel.yellow.detach
     prompt = TTY::Prompt.new
     choice = prompt.select("Would you like to sign in with your username or do you need to create an account?", ["Sign in", "Create an account", "Exit"])
     case choice
     when "Sign in"
       user_name = prompt.ask("What is your username?")
       if !User.find_by(username: user_name)
-        puts "That is not a valid username, please try again."
+        puts warning.("That is not a valid username, please try again.")
         self.run
       end
     when "Create an account"
@@ -25,7 +28,7 @@ class Cli
       user_name = prompt.ask("What would you like your username to be?")
       # DONE: see if username already exists, and if so, let user know that username is taken and ask for a different one
       if User.find_by(username: user_name)
-        user_name = prompt.ask("Sorry but that username is already taken. Please choose a different username.")
+        user_name = prompt.ask(warning.("Sorry but that username is already taken. Please choose a different username."))
         User.create(name: full_name, username: user_name)
       else
         User.create(name: full_name, username: user_name)
@@ -59,6 +62,9 @@ class Cli
   end
 
   def tweet_options(user)
+    pastel = Pastel.new
+    error    = pastel.red.bold.detach
+    warning  = pastel.yellow.detach
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Howdy #{user.name}! What would you like to do?", ["View Others Tweets", "Create a new tweet", "See all your tweets", "See all tweets for a topic", "Update a tweet", "Delete a tweet", "Back"])
     case menu_choice
@@ -83,7 +89,7 @@ class Cli
     all_topics = Topic.all  
     when "See all your tweets" 
       if user.tweets.empty?
-        puts "You do not have any tweets to view."
+        puts error.("You do not have any tweets to view.")
           return self.tweet_options(user)
       else
       user = User.find(user.id)
@@ -98,7 +104,7 @@ class Cli
     when "Update a tweet" 
       # DONE:
       if user.tweets.empty?
-        puts "Sorry, you do not have any tweets to update."
+        puts error.("Sorry, you do not have any tweets to update.")
           return self.tweet_options(user)
       else
       which_tweet = prompt.select("Which tweet would you like to update?", user.tweets.map(&:message))
@@ -110,7 +116,7 @@ class Cli
     when "Delete a tweet" 
       # DONE: kinda works, but only after closing cli and reopening
       if user.tweets.empty?
-        puts "Sorry, you do not have any tweets to delete."
+        puts error.("Sorry, you do not have any tweets to delete.")
           return self.tweet_options(user)
       else
       user = User.find(user.id)
@@ -125,6 +131,9 @@ class Cli
   end
 
   def follow_options(user)
+    pastel = Pastel.new
+    error    = pastel.red.bold.detach
+    warning  = pastel.yellow.detach
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("Hola #{user.name}! What would you like to do?", ["Following", "Followers", "Follow Tweeters", "Back"])
     case menu_choice
@@ -171,7 +180,7 @@ class Cli
       end
     when "Followers"
       if user.followers.empty?
-        puts "You have no followers! You probably have no friends!"
+        puts warning.("You have no followers! You probably have no friends!")
         return self.follow_options(user)
       else
       fallow = prompt.select("Your followers:", user.followers.map{|t| t.username})  
@@ -218,7 +227,7 @@ class Cli
       if tweeter == "Back"
         return self.follow_options(user)
       end
-      choice = prompt.select("Would you like to fallow #{tweeter}", ["Yes", "No"])
+      choice = prompt.select("Would you like to follow #{tweeter}", ["Yes", "No"])
       tweeter_user = User.all.find{|user| user.username == tweeter}
       if choice == "Yes"
         Follow.create(follower_id: user.id, followed_id: tweeter_user.id)
@@ -233,7 +242,7 @@ class Cli
 
 def topic_options(user)
     prompt = TTY::Prompt.new
-    menu_choice = prompt.select("Hell #{user.name}! What would you like to do?", ["See all topics", "See most popular topic", "See all tweets for a topic", "Back"])
+    menu_choice = prompt.select("Hello #{user.name}! What would you like to do?", ["See all topics", "See most popular topic", "See all tweets for a topic", "Back"])
     case menu_choice
     when "See all topics" 
       Topic.all.each {|topic| puts topic.name.upcase; puts "**********"}
