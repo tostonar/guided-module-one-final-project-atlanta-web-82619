@@ -187,6 +187,9 @@ class Cli
       fallow_choice = User.all.find_by(username: fallow)
       choice3 = prompt.select("Options:",["Tweets by #{fallow}", "Followers of #{fallow}", "Exit"])
         if choice3 == "Tweets by #{fallow}"
+          if fallow_choice.tweets.empty?
+            return self.follow_options(user)
+          else
           tweet = prompt.select("Select a tweet you would like to interact with:", fallow_choice.tweets.map{|tweet| tweet.message})
           puts tweet
           choice = prompt.select("What would you like to do with the tweet?", ["Retweet", "Back"])
@@ -197,6 +200,7 @@ class Cli
             when "Back"
               return self.tweet_options(user)
             end
+          end
         elsif choice3 == "Followers of #{fallow}"
         fallower = prompt.select("#{fallow}'s followers:", fallow_choice.followers.map{|f| f.username})
         user_follower = User.all.find_by(username: fallower)
